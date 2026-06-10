@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from predictor import detect_objects
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 
@@ -29,10 +30,12 @@ def upload():
 
     file.save(filepath)
 
+    detections = detect_objects(filepath)
+
     return jsonify({
-        "message": "Image uploaded successfully",
-        "filename": file.filename
-    })
+    "message": "Analysis completed",
+    "detections": detections
+})
 
 if __name__ == "__main__":
     app.run(debug=True)

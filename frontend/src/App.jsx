@@ -4,21 +4,21 @@ import axios from "axios";
 function App() {
 
   const [file, setFile] = useState(null);
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState(null);
 
   const uploadImage = async () => {
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    formData.append("image", file);
+  formData.append("image", file);
 
-    const response = await axios.post(
-      "http://127.0.0.1:5000/upload",
-      formData
-    );
+  const response = await axios.post(
+    "http://127.0.0.1:5000/upload",
+    formData
+  );
 
-    setResult(response.data.message);
-  };
+  setResult(response.data);
+};
 
   return (
     <div>
@@ -38,7 +38,15 @@ function App() {
         Upload
       </button>
 
-      <h3>{result}</h3>
+      {
+        result?.detections?.map((item, index) => (
+        <div key={index}>
+        <p>
+         {item.name} - {item.confidence}%
+        </p>
+        </div>
+          ))
+     }
 
     </div>
   );
