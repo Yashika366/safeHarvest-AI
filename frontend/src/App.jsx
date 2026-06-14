@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
 import "./App.css";
 
 function App() {
@@ -8,6 +9,29 @@ function App() {
   const [result, setResult] = useState(null);
   const [detectedImage, setDetectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const onDrop = (acceptedFiles) => {
+  const selectedFile = acceptedFiles[0];
+
+  if (selectedFile) {
+  setFile(selectedFile);
+  setPreview(URL.createObjectURL(selectedFile));
+
+  // Reset previous results
+  setResult(null);
+  setDetectedImage(null);
+  setSuccessMessage("");
+}
+};
+
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop,
+  accept: {
+    "image/*": [],
+  },
+  multiple: false,
+});
 
   const uploadImage = async () => {
     if (!file) {
@@ -28,6 +52,10 @@ function App() {
 
       setResult(response.data);
       setDetectedImage(response.data.image_url);
+
+      setSuccessMessage(
+  "✅ Analysis completed successfully!"
+   );
     } catch (error) {
       console.error(error);
       alert("Error uploading image.");
@@ -65,31 +93,37 @@ function App() {
       </p>
 
       <div className="upload-card">
-        <div className="file-upload-container">
-  <label htmlFor="file-upload" className="file-upload-btn">
-    📷 Select Image
-  </label>
+        <div
+  {...getRootProps()}
+  className={`dropzone ${
+    isDragActive ? "dropzone-active" : ""
+  }`}
+>
+  <input {...getInputProps()} />
 
-  <input
-    id="file-upload"
-    type="file"
-    accept="image/*"
-    onChange={(e) => {
-      const selectedFile = e.target.files[0];
+  {isDragActive ? (
+    <p>📥 Drop the image here...</p>
+  ) : (
+    <>
+      <div className="upload-icon">
+        📷
+      </div>
 
-      setFile(selectedFile);
+      <p className="dropzone-title">
+        Drag & Drop your image here
+      </p>
 
-      if (selectedFile) {
-        setPreview(URL.createObjectURL(selectedFile));
-        setResult(null);
-        setDetectedImage(null);
-      }
-    }}
-  />
+      <p className="dropzone-subtitle">
+        or click to browse
+      </p>
 
-  <p className="file-name">
-    {file ? file.name : "No image selected"}
-  </p>
+      {file && (
+        <p className="file-name">
+          Selected: {file.name}
+        </p>
+      )}
+    </>
+  )}
 </div>
 
         <button
@@ -107,6 +141,12 @@ function App() {
           <p>Analyzing image using AI...</p>
         </div>
       )}
+
+      {successMessage && !loading && (
+       <div className="success-message fade-in">
+        {successMessage}
+       </div>
+)}
 
       {(preview || detectedImage) && !loading && (
         <div className="image-section">
@@ -161,11 +201,14 @@ function App() {
         <h2>🚀 Future Vision</h2>
 
         <p>
-          SafeHarvest AI currently identifies fruits and vegetables
-          using computer vision techniques. Future versions aim to
-          integrate chemical residue analysis and supply-chain
-          traceability to improve food safety assessment.
-        </p>
+  Current implementation uses a pre-trained YOLOv8 model for
+  proof-of-concept fruit detection. Future versions will
+  incorporate a custom-trained dataset to improve accuracy
+  and support a wider range of produce. Additionally,
+  SafeHarvest AI aims to integrate chemical residue analysis
+  and supply-chain traceability to enhance food safety
+  assessment.
+</p>
       </div>
     </div>
   );

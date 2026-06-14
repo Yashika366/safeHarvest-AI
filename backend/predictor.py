@@ -2,11 +2,14 @@ from ultralytics import YOLO
 import os
 
 # Load YOLO model
-model = YOLO("yolov8n.pt")
+model = YOLO("yolov8l.pt")
 
 def detect_objects(image_path):
-    results = model(image_path)
-
+    results = model(
+    image_path,
+    conf=0.5,
+    iou=0.45
+)
     detections = []
 
     annotated_image_path = None
