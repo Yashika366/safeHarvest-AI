@@ -38,7 +38,8 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
       alert("Please select an image first.");
       return;
     }
-
+   
+setSuccessMessage("");
     setLoading(true);
 
     const formData = new FormData();
@@ -63,6 +64,13 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
 
     setLoading(false);
   };
+ const resetAnalysis = () => {
+  setFile(null);
+  setPreview(null);
+  setResult(null);
+  setDetectedImage(null);
+  setSuccessMessage("");
+};
 
   const groupedDetections = {};
 
@@ -175,7 +183,14 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
           )}
         </div>
       )}
-
+{result && (
+  <button
+    className="try-again-btn"
+    onClick={resetAnalysis}
+  >
+     Try Another Image
+  </button>
+)}
       <div className="results-container">
         {Object.entries(groupedDetections).map(([name, details]) => (
           <div key={name} className="result-card fade-in">

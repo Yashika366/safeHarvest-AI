@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import os
 
 # Load YOLO model
-model = YOLO("yolov8l.pt")
+model = YOLO("yolov8m.pt")
 
 def detect_objects(image_path):
     results = model(
